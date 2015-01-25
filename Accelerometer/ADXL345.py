@@ -1,12 +1,12 @@
-#This program handles the communication over I2C between a Raspberry Pi and an ADXL345 Accelerometer
-#Made by: MrTijn/Tijndagamer
-#Copyright 2015
+# This program handles the communication over I2C between a Raspberry Pi and an ADXL345 Accelerometer
+# Made by: MrTijn/Tijndagamer
+# Copyright 2015
 
 import smbus
 
 class MrTijnADXL345:
 
-    #Global Variables
+    # Global Variables
     earthGravityMS2               = 9.80665
     moonGravityMS2                = 1.62243
     marsGravityMS2                = 3.71
@@ -15,7 +15,7 @@ class MrTijnADXL345:
     bus                           = smbus.SMBus(1)
     address                       = None
 
-    #ADXL345 Registers
+    # ADXL345 Registers
     dataFormat                    = 0x31
     bandwithRate                  = 0x2C
     POWER_CTL                     = 0x2D
@@ -57,31 +57,31 @@ class MrTijnADXL345:
         self.SetRange(baseRange)
         self.EnableMeasurement()
 
-    #Enables measurement by writing 0x08 to POWER_CTL, register 0x27
+    # Enables measurement by writing 0x08 to POWER_CTL, register 0x27
     def EnableMeasurement(self):
         try:
             self.bus.write_byte_data(self.address, self.POWER_CTL, self.Measure)
         except:
             print("Error in EnableMeasurement(), are you sure that the ADXL345 is plugged in and wired correctly?")
 
-    #Disables measurement by writing 0x00 to POWER_CTL, register 0x27
+    # Disables measurement by writing 0x00 to POWER_CTL, register 0x27
     def DisableMeasurement(self):
         self.bus.write_byte_data(self.address, self.POWER_CTL, 0x00)
 
-    #Reads POWER_CTL, register 0x27
+    # Reads POWER_CTL, register 0x27
     def ReadMeasurementMode(self):
         return self.bus.read_byte_data(self.address, self.POWER_CTL) 
 
-    #Changes the bandwithRate by writing rate to bandwithRate, register 0x2C
+    # Changes the bandwithRate by writing rate to bandwithRate, register 0x2C
     def SetBandwithRate(self, rate):
         self.bus.write_byte_data(self.address, self.bandwithRate, rate)
 
-    #Reads bandwithRate, register 0x2C
+    # Reads bandwithRate, register 0x2C
     def ReadBandwithRate(self):
         rawBandwithRate = self.bus.read_byte_data(self.address, self.bandwithRate)
         return rawBandwithRate & 0x0F
 
-    #Changes the range of the ADXL345. Available ranges are 2G, 4G, 8G and 16G.
+    # Changes the range of the ADXL345. Available ranges are 2G, 4G, 8G and 16G.
     def SetRange(self, range):
         value = self.bus.read_byte_data(self.address, self.dataFormat)
 
@@ -91,14 +91,14 @@ class MrTijnADXL345:
 
         self.bus.write_byte_data(self.address, self.dataFormat, value)
 
-    #Reads the range the ADXL345 is set to.
+    # Reads the range the ADXL345 is set to.
     def ReadRange(self):
         #todo
         pass
 
-    #Gets all the axes and returns them in a dictionary
+    # Gets all the axes and returns them in a dictionary
     def GetAllAxes(self, round = False):
-        #Read the raw bytes from the ADXL345
+        # Read the raw bytes from the ADXL345
         bytes = self.bus.read_i2c_block_data(self.address, self.DATAX0, 6)
         
         x = bytes[0] | (bytes[1] << 8)
