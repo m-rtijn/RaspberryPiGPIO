@@ -9,6 +9,7 @@ class MrTijnADXL345:
     #Global Variables
     earthGravityMS2               = 9.80665
     moonGravityMS2                = 1.62243
+    marsGravityMS2                = 3.71
     gravityMS2                    = 0
     scaleMultiplier               = 0.004
     bus                           = smbus.SMBus(1)
@@ -46,6 +47,8 @@ class MrTijnADXL345:
             self.gravityMS2 = self.earthGravityMS2
         elif celestialBody == "moon":
             self.gravityMS2 = self.moonGravityMS2
+        elif celestialBody == "mars":
+            self.gravityMS2 = self.marsGravityMS2
         else:
             raise InputError("celestial body", celestialBody)
 
