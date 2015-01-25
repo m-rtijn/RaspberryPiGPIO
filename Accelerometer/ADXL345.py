@@ -155,8 +155,8 @@ class MrTijnADXL345:
         return x
     
 if __name__ == "__main__":
-    accel = MrTijnADXL345()
-    axes = accel.GetAllAxes()
+    accelerometer = MrTijnADXL345()
+    axes = accelerometer.GetAllAxes()
     print("x: %.3f" % ( axes['x'] ))
     print("y: %.3f" % ( axes['y'] ))
     print("z: %.3f" % ( axes['z'] ))
