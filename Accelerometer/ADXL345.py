@@ -127,7 +127,33 @@ class MrTijnADXL345:
             z = round(z, 4)
 
         return {"x": x, "y": y, "z": z}
+    
+    def GetOneValue(self, value, round = False):
+        readRegister = 0x00
+        
+        if value == "x":
+            readRegister = self.DATAX0
+        elif value == "y":
+            readRegister = self.DATAY0
+        elif value == "z":
+            readRegister = self.DATAZ0
+            
+        #Read the raw bytes from the ADXL345
+        bytes = self.bus.read_i2c_block_data(self.address, readRegister, 2)
+        
+        x = bytes[0] | (bytes[1] << 8)
+        if(x & (1 << 16 - 1)):
+            x = x - (1<<16)
 
+        x = x * self.scaleMultiplier
+
+        x = x * self.gravityMS2
+
+        if round == True:
+            x = round(x, 4)
+        
+        return x
+    
 if __name__ == "__main__":
     accel = MrTijnADXL345()
     axes = accel.GetAllAxes()
