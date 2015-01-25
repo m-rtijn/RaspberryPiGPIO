@@ -32,14 +32,14 @@ class MrTijnADXL345:
     range8G                       = 0x02
     range16G                      = 0x03
 
-    Measure                   = 0x08
+    Measure                       = 0x08
 
-    DATAX0                    = 0x32
-    DATAX1                    = 0x33
-    DATAY0                    = 0x34
-    DATAY1                    = 0x35
-    DATAZ0                    = 0x36
-    DATAZ1                    = 0x37
+    DATAX0                        = 0x32
+    DATAX1                        = 0x33
+    DATAY0                        = 0x34
+    DATAY1                        = 0x35
+    DATAZ0                        = 0x36
+    DATAZ1                        = 0x37
     
     def __init__(self, baseRange = range2G, address = 0x52, celestialBody = "earth"):
         if celestialBody == "earth":
@@ -94,7 +94,7 @@ class MrTijnADXL345:
         pass
 
     #Gets all the axes and returns them in a dictionary
-    def GetAllAxes(self):
+    def GetAllAxes(self, round = False):
         #Read the raw bytes from the ADXL345
         bytes = self.bus.read_i2c_block_data(self.address, self.DATAX0, 6)
         
@@ -118,11 +118,12 @@ class MrTijnADXL345:
         y = y * self.gravityMS2
         z = z * self.gravityMS2
 
-#        x = round(x, 4)
-#        y = round(y, 4)
-#        z = round(z, 4)
+        if round == True:
+            x = round(x, 4)
+            y = round(y, 4)
+            z = round(z, 4)
 
-        return {"x": x, "y": y, "z": z, "bytes": bytes}
+        return {"x": x, "y": y, "z": z}
 
 if __name__ == "__main__":
     accel = MrTijnADXL345()
