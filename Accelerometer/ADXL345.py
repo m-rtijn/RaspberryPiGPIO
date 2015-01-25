@@ -8,6 +8,8 @@ class MrTijnADXL345:
 
     #Global Variables
     earthGravityMS2               = 9.80665
+    moonGravityMS2                = 1.62243
+    gravityMS2                    = 0
     scaleMultiplier               = 0.004
     bus                           = smbus.SMBus(1)
     address                       = None
@@ -25,10 +27,10 @@ class MrTijnADXL345:
     bandwithRate50HZ              = 0x0A
     bandwithRate25HZ              = 0x09
 
-    RANGE_2G                  = 0x00
-    RANGE_4G                  = 0x01
-    RANGE_8G                  = 0x02
-    RANGE_16G                 = 0x03
+    range2G                       = 0x00
+    range4G                       = 0x01
+    range8G                       = 0x02
+    range16G                      = 0x03
 
     Measure                   = 0x08
 
@@ -39,15 +41,25 @@ class MrTijnADXL345:
     DATAZ0                    = 0x36
     DATAZ1                    = 0x37
     
-    def __init__(self, address = 0x53):
+    def __init__(self, baseRange = range2G, address = 0x52, celestialBody = "earth"):
+        if celestialBody == "earth":
+            self.gravityMS2 = self.earthGravityMS2
+        elif celestialBody == "moon":
+            self.gravityMS2 = self.moonGravityMS2
+        else:
+            raise InputError("celestial body", celestialBody)
+
         self.address = address
         self.SetBandwithRate(self.bandwithRate100HZ)
-        self.SetRange(self.RANGE_2G)
+        self.SetRange(baseRange)
         self.EnableMeasurement()
 
     #Enables measurement by writing 0x08 to POWER_CTL, register 0x27
     def EnableMeasurement(self):
-        self.bus.write_byte_data(self.address, self.POWER_CTL, self.Measure)
+        try:
+            self.bus.write_byte_data(self.address, self.POWER_CTL, self.Measure)
+        except:
+            print("Error in EnableMeasurement(), are you sure that the ADXL345 is plugged in and wired correctly?")
 
     #Disables measurement by writing 0x00 to POWER_CTL, register 0x27
     def DisableMeasurement(self):
@@ -102,9 +114,9 @@ class MrTijnADXL345:
         y = y * self.scaleMultiplier
         z = z * self.scaleMultiplier
 
-        x = x * self.earthGravityMS2
-        y = y * self.earthGravityMS2
-        z = z * self.earthGravityMS2
+        x = x * self.gravityMS2
+        y = y * self.gravityMS2
+        z = z * self.gravityMS2
 
 #        x = round(x, 4)
 #        y = round(y, 4)
@@ -119,3 +131,10 @@ if __name__ == "__main__":
     print("y: %.3f" % ( axes['y'] ))
     print("z: %.3f" % ( axes['z'] ))
         
+
+class InputError(Exception):
+
+    def __init__(self, errorMessage, inputExpression):
+        self.errorMessage = errorMessage
+        self.inputExpression = inputExpression
+        print(inputExpression + " is an invalid " + errorMessage)
