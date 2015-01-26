@@ -4,7 +4,7 @@
 
 import smbus
 
-class MrTijnADXL345:
+class ADXL345:
 
     # Global Variables
     earthGravityMS2               = 9.80665
@@ -19,6 +19,7 @@ class MrTijnADXL345:
     dataFormat                    = 0x31
     bandwithRate                  = 0x2C
     POWER_CTL                     = 0x2D
+    Measure                       = 0x08
 
     bandwithRate1600HZ            = 0x0F
     bandwithRate800HZ             = 0x0E
@@ -32,8 +33,6 @@ class MrTijnADXL345:
     range4G                       = 0x01
     range8G                       = 0x02
     range16G                      = 0x03
-
-    Measure                       = 0x08
 
     DATAX0                        = 0x32
     DATAX1                        = 0x33
@@ -127,7 +126,8 @@ class MrTijnADXL345:
             z = round(z, 4)
 
         return {"x": x, "y": y, "z": z}
-    
+
+    #Gets one specific value and returns it
     def GetOneValue(self, value, round = False):
         readRegister = 0x00
         
