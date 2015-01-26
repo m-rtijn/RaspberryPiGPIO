@@ -42,7 +42,7 @@ class ADXL345:
     DATAZ0                        = 0x36
     DATAZ1                        = 0x37
     
-    def __init__(self, baseRange = range2G, address = 0x53, celestialBody = "earth"):
+    def __init__(self,  address, baseRange = range2G, baseBandwithRate = bandwithRate100HZ, celestialBody = "earth"):
         if celestialBody == "earth":
             self.gravityMS2 = self.earthGravityMS2
         elif celestialBody == "moon":
@@ -53,7 +53,7 @@ class ADXL345:
             raise InputError("celestial body", celestialBody)
 
         self.address = address
-        self.SetBandwithRate(self.bandwithRate100HZ)
+        self.SetBandwithRate(baseBandwithRate)
         self.SetRange(baseRange)
         self.EnableMeasurement()
 
