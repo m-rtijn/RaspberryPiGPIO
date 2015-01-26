@@ -10,10 +10,11 @@ class ADXL345:
     earthGravityMS2               = 9.80665
     moonGravityMS2                = 1.62243
     marsGravityMS2                = 3.71
-    gravityMS2                    = 0
+    gravityMS2                    = None
     scaleMultiplier               = 0.004
     bus                           = smbus.SMBus(1)
     address                       = None
+    DEBUG                         = True
 
     # ADXL345 Registers
     dataFormat                    = 0x31
@@ -41,7 +42,7 @@ class ADXL345:
     DATAZ0                        = 0x36
     DATAZ1                        = 0x37
     
-    def __init__(self, baseRange = range2G, address = 0x52, celestialBody = "earth"):
+    def __init__(self, baseRange = range2G, address = 0x53, celestialBody = "earth"):
         if celestialBody == "earth":
             self.gravityMS2 = self.earthGravityMS2
         elif celestialBody == "moon":
@@ -73,7 +74,10 @@ class ADXL345:
 
     # Changes the bandwithRate by writing rate to bandwithRate, register 0x2C
     def SetBandwithRate(self, rate):
-        self.bus.write_byte_data(self.address, self.bandwithRate, rate)
+        try:
+            self.bus.write_byte_data(self.address, self.bandwithRate, rate)
+        except:
+            print("Error in SetBandwithRate, are you sure that the ADXL345 is plugged in and wired correctly?")
 
     # Reads bandwithRate, register 0x2C
     def ReadBandwithRate(self):
@@ -126,7 +130,12 @@ class ADXL345:
             y = round(y, 4)
             z = round(z, 4)
 
-        return {"x": x, "y": y, "z": z}
+        if self.DEBUG == False:
+            return {"x": x, "y": y, "z": z}
+        elif self.DEBUG == True:
+            return {"x": x, "y": y, "z": z, "bytes": bytes}
+        else:
+            return {"x": x, "y": y, "z": z}
 
     #Gets one specific value and returns it
     def GetOneValue(self, value, round = False):
