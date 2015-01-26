@@ -104,7 +104,8 @@ class ADXL345:
     def GetAllAxes(self, round = False):
         # Read the raw bytes from the ADXL345
         bytes = self.bus.read_i2c_block_data(self.address, self.DATAX0, 6)
-        
+
+        #<~~magic~~>
         x = bytes[0] | (bytes[1] << 8)
         if(x & (1 << 16 - 1)):
             x = x - (1<<16)
@@ -120,6 +121,7 @@ class ADXL345:
         x = x * self.scaleMultiplier 
         y = y * self.scaleMultiplier
         z = z * self.scaleMultiplier
+        #</~~magic~~>
 
         x = x * self.gravityMS2
         y = y * self.gravityMS2
@@ -150,7 +152,8 @@ class ADXL345:
             
         #Read the raw bytes from the ADXL345
         bytes = self.bus.read_i2c_block_data(self.address, readRegister, 2)
-        
+
+        #<~~magic~~>
         x = bytes[0] | (bytes[1] << 8)
         if(x & (1 << 16 - 1)):
             x = x - (1<<16)
@@ -158,6 +161,7 @@ class ADXL345:
         x = x * self.scaleMultiplier
 
         x = x * self.gravityMS2
+        #</~~magic~~>
 
         if round == True:
             x = round(x, 4)
