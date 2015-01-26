@@ -19,7 +19,7 @@ class ADXL345:
     dataFormat                    = 0x31
     bandwithRate                  = 0x2C
     POWER_CTL                     = 0x2D
-    Measure                       = 0x08
+    measure                       = 0x08
 
     bandwithRate1600HZ            = 0x0F
     bandwithRate800HZ             = 0x0E
@@ -59,7 +59,7 @@ class ADXL345:
     # Enables measurement by writing 0x08 to POWER_CTL, register 0x27
     def EnableMeasurement(self):
         try:
-            self.bus.write_byte_data(self.address, self.POWER_CTL, self.Measure)
+            self.bus.write_byte_data(self.address, self.POWER_CTL, self.measure)
         except:
             print("Error in EnableMeasurement(), are you sure that the ADXL345 is plugged in and wired correctly?")
 
@@ -90,10 +90,11 @@ class ADXL345:
 
         self.bus.write_byte_data(self.address, self.dataFormat, value)
 
-    # Reads the range the ADXL345 is set to.
+    # Reads the range the ADXL345 is set to. This function is still a WIP
     def ReadRange(self):
-        #todo
-        pass
+        rawValue = self.bus.read_byte_data(self.address, self.dataFormat)
+
+        return rawValue
 
     # Gets all the axes and returns them in a dictionary
     def GetAllAxes(self, round = False):
@@ -155,7 +156,7 @@ class ADXL345:
         return x
     
 if __name__ == "__main__":
-    accelerometer = MrTijnADXL345()
+    accelerometer = ADXL345()
     axes = accelerometer.GetAllAxes()
     print("x: %.3f" % ( axes['x'] ))
     print("y: %.3f" % ( axes['y'] ))
