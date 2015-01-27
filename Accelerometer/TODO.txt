@@ -1,2 +1,0 @@
-ADXL345 to do list
-- move from /accelerometer to /ADXL345
