@@ -14,7 +14,7 @@ class ADXL345:
     scaleMultiplier               = 0.004
     bus                           = smbus.SMBus(1)
     address                       = None
-    DEBUG                         = True
+    DEBUG                         = False
 
     # ADXL345 Registers
     dataFormat                    = 0x31
