@@ -11,7 +11,7 @@ class ADXL345:
     moonGravityMS2                = 1.62243
     marsGravityMS2                = 3.71
     gravityMS2                    = None
-    scaleMultiplier               = 0.004
+    scaleMultiplier               = 0.0039 # This is the typical scale factor in g/LSB as given in the datasheet (http://www.analog.com/static/imported-files/data_sheets/ADXL345.pdf , page 4) 
     bus                           = smbus.SMBus(1)
     address                       = None
     DEBUG                         = False
