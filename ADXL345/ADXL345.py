@@ -233,7 +233,6 @@ class InputError(Exception):
     """This provides instructions for an instance of an error"""
 
     def __init__(self, errorMessage, inputExpression):
-
         self.errorMessage = errorMessage
         self.inputExpression = inputExpression
         print(inputExpression + " is an invalid " + errorMessage)
