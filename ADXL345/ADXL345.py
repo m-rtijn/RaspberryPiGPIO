@@ -159,14 +159,14 @@ class ADXL345:
             z = z - (1 << 16)  # To this line we're not completly sure what's happening
 
         # Multiply the values by the scale multiplier to get the acceleration in g
-        x = x * self.scaleMultiplier
-        y = y * self.scaleMultiplier
-        z = z * self.scaleMultiplier
+        x *= self.scaleMultiplier
+        y *= self.scaleMultiplier
+        z *= self.scaleMultiplier
 
         # Multiply the values in g by the gravity in m/s^2 to get the acceleration in m/s^2
-        x = x * self.gravityMS2
-        y = y * self.gravityMS2
-        z = z * self.gravityMS2
+        x *= self.gravityMS2
+        y *= self.gravityMS2
+        z *= self.gravityMS2
 
         # Round the values if the user wants to
         if round:
@@ -207,10 +207,10 @@ class ADXL345:
             x = x - (1 << 16)  # to here
 
         # Multiply the value by the scale multiplier to get the acceleration in g. The scale multiplier is given in the datasheet.
-        x = x * self.scaleMultiplier
+        x *= self.scaleMultiplier
 
         # Multiply the value in g by the gravity in m/s^2 to get the acceleration in m/s^2.
-        x = x * self.gravityMS2
+        x *= self.gravityMS2
 
         # Round the values if the user wants to
         if round:
