@@ -12,7 +12,7 @@ class ADXL345:
     marsGravityMS2                = 3.71
     gravityMS2                    = None
     scaleMultiplier               = 0.0039 # This is the typical scale factor in g/LSB as given in the datasheet (http://www.analog.com/static/imported-files/data_sheets/ADXL345.pdf , page 4) 
-    bus                           = smbus.SMBus(1)
+    bus                           = smbus.SMBus(1) # This is the bus that we use to send data over I2C
     address                       = None
     DEBUG                         = False
 
@@ -117,21 +117,25 @@ class ADXL345:
         z = bytes[4] | (bytes[5] << 8)
         if(z & (1 << 16 - 1)):
             z = z - (1<<16)
+        #</~~magic~~>
 
+        # Multiply the values by the scale multiplier to get the acceleration in g. The scale multiplier is given in the datasheet.
         x = x * self.scaleMultiplier 
         y = y * self.scaleMultiplier
         z = z * self.scaleMultiplier
-        #</~~magic~~>
-
+        
+        # Multiply the values in g by the gravity in m/s^2 to get the acceleration in m/s^2.
         x = x * self.gravityMS2
         y = y * self.gravityMS2
         z = z * self.gravityMS2
 
+        # Round the values if the user wants to
         if round == True:
             x = round(x, 4)
             y = round(y, 4)
             z = round(z, 4)
 
+        # Return the correct values
         if self.DEBUG == False:
             return {"x": x, "y": y, "z": z}
         elif self.DEBUG == True:
@@ -157,12 +161,15 @@ class ADXL345:
         x = bytes[0] | (bytes[1] << 8)
         if(x & (1 << 16 - 1)):
             x = x - (1<<16)
-
+        #</~~magic~~>
+            
+        # Multiply the value by the scale multiplier to get the acceleration in g. The scale multiplier is given in the datasheet.
         x = x * self.scaleMultiplier
 
+        # Multiply the value in g by the gravity in m/s^2 to get the acceleration in m/s^2.
         x = x * self.gravityMS2
-        #</~~magic~~>
-
+        
+        # Round the values if the user wants to
         if round == True:
             x = round(x, 4)
         
