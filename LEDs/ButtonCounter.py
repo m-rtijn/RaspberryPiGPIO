@@ -1,39 +1,26 @@
-import RPi.GPIO as gpio
+import RPi.GPIO as GPIO
 import time
-import os
 
-#Setup the gpio
-gpio.setmode(gpio.BCM)
-gpio.setwarnings(False)
+#Setup the GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
-#Setup the button
-ButtonPin = 18
-gpio.setup(ButtonPin, gpio.IN)
+ButtonPin1 = 22
+ButtonPin2 = 27
 
-start = 0
-stop = 0
-currentState = False
-oldState = False
+GPIO.setup(ButtonPin1, GPIO.IN)
+GPIO.setup(ButtonPin2, GPIO.IN)
 
-def ButtonLoop():
-	global start
-	global stop
-	global currentState
-	global oldState
-	while True:
-		currentState = gpio.input(ButtonPin)
-		if currentState == False and oldState == True:
-			start = time.time()
-		elif currentState == True and oldState == False:
-			stop = time.time()
-		if ((start != 0) and (stop != 0)):
-			print(start - stop)
-			print(start)
-			print(stop)
-			start = 0
-			stop = 0
-		oldState = currentState
-try:
-	ButtonLoop()
-except KeyboardInterrupt:
-	gpio.cleanup()
+def MeasurePress(ButtonPin):
+    while GPIO.input(ButtonPin) == 1:
+        pass
+    start = time.time()
+
+    while GPIO.input(ButtonPin) == 0:
+        pass
+    stop = time.time()
+
+    return stop - start
+
+while True:
+    print(MeasurePress(ButtonPin1))
