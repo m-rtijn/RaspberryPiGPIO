@@ -1,8 +1,10 @@
-# This program handles the communication over I2C between a Raspberry Pi and an ADXL345 Accelerometer
+# This program handles the communication over I2C
+# between a Raspberry Pi and an ADXL345 Accelerometer
 # Made by: MrTijn/Tijndagamer
 # Copyright 2015
 
 import smbus
+
 
 class ADXL345:
 
@@ -41,7 +43,7 @@ class ADXL345:
     DATAY1                        = 0x35
     DATAZ0                        = 0x36
     DATAZ1                        = 0x37
-    
+
     def __init__(self,  address, baseRange = range2G, baseBandwithRate = bandwithRate100HZ, celestialBody = "earth"):
         if celestialBody == "earth":
             self.gravityMS2 = self.earthGravityMS2
@@ -108,15 +110,15 @@ class ADXL345:
         #<~~magic~~>
         x = bytes[0] | (bytes[1] << 8)
         if(x & (1 << 16 - 1)):
-            x = x - (1<<16)
+            x = x - (1 << 16)
         
         y = bytes[2] | (bytes[3] << 8)
         if(y & (1 << 16 - 1)):
-            y = y - (1<<16)
+            y = y - (1 << 16)
 
         z = bytes[4] | (bytes[5] << 8)
         if(z & (1 << 16 - 1)):
-            z = z - (1<<16)
+            z = z - (1 << 16)
         #</~~magic~~>
 
         # Multiply the values by the scale multiplier to get the acceleration in g. The scale multiplier is given in the datasheet.
@@ -160,7 +162,7 @@ class ADXL345:
         #<~~magic~~>
         x = bytes[0] | (bytes[1] << 8)
         if(x & (1 << 16 - 1)):
-            x = x - (1<<16)
+            x = x - (1 << 16)
         #</~~magic~~>
             
         # Multiply the value by the scale multiplier to get the acceleration in g. The scale multiplier is given in the datasheet.
@@ -178,10 +180,10 @@ class ADXL345:
 if __name__ == "__main__":
     accelerometer = ADXL345()
     axes = accelerometer.GetAllAxes()
-    print("x: %.3f" % ( axes['x'] ))
-    print("y: %.3f" % ( axes['y'] ))
-    print("z: %.3f" % ( axes['z'] ))
-        
+    print("x: %.3f" % (axes['x']))
+    print("y: %.3f" % (axes['y']))
+    print("z: %.3f" % (axes['z'])) 
+
 
 class InputError(Exception):
 
