@@ -1,13 +1,18 @@
+"""Created by MrTijn/Tijndagamer
+Copyright 2014
+"""
+
 import RPi.GPIO as gpio
 import os
 
-#Setup the gpio
+# Setup the gpio
 gpio.setmode(gpio.BCM)
 gpio.setwarnings(False)
 
-#Setup the button
+# Setup the button
 ButtonPin = 18
 gpio.setup(ButtonPin, gpio.IN)
+
 
 def ButtonLoop(): #The loop for the button
 	while True:
@@ -18,5 +23,6 @@ def ButtonLoop(): #The loop for the button
 						
 		except KeyboardInterrupt:
 			gpio.cleanup()
+
 
 ButtonLoop()
