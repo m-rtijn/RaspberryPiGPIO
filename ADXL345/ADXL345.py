@@ -176,7 +176,8 @@ class ADXL345:
             x = round(x, 4)
         
         return x
-    
+
+# If a user runs this file just display the latest values
 if __name__ == "__main__":
     accelerometer = ADXL345()
     axes = accelerometer.GetAllAxes()
