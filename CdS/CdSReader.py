@@ -4,9 +4,11 @@
 import RPi.GPIO as GPIO
 import time
 
+#Setup the GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+#Reads the CdS cel and returns the reading
 def ReadCdSCel(CdSCelPin):
 	reading = 0
 	GPIO.setup(CdSCelPin, GPIO.OUT)
