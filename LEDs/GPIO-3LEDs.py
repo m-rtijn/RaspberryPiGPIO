@@ -8,7 +8,7 @@ import random
 #Set the GPIO mode to BCM
 GPIO.setmode(GPIO.BCM)
 
-#Turn of warnings
+#Turn off warnings
 GPIO.setwarnings(False)
 
 #Setup the Button
