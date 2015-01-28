@@ -145,7 +145,7 @@ class ADXL345:
         else:
             return {"x": x, "y": y, "z": z}
 
-    #Gets one specific value and returns it
+    # Gets one specific value and returns it
     def GetOneValue(self, value, round = False):
         readRegister = 0x00
         
@@ -156,7 +156,7 @@ class ADXL345:
         elif value == "z":
             readRegister = self.DATAZ0
             
-        #Read the raw bytes from the ADXL345
+        # Read the raw bytes from the ADXL345
         bytes = self.bus.read_i2c_block_data(self.address, readRegister, 2)
 
         #<~~magic~~>
