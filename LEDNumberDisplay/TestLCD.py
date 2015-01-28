@@ -1,3 +1,7 @@
+"""This program handles the communication over I2C between a Raspberry Pi and an LCD screen
+Made by: MrTijn/Tijndagamer
+"""
+
 import RPi.GPIO as GPIO
 import time
 
