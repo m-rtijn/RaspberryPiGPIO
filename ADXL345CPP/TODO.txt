@@ -4,12 +4,12 @@ Test:
 - ReadMeasurementMode
 - SetBandwithRate
 - ReadBandwithRate
+- GetAllAxes
 - the constructor
 Add:
 - DisableMeasurement
 - SetRange
 - ReadRange
-- GetAllAxes
 - GetOneValue
 - more comments
 - example

@@ -1,5 +1,4 @@
 #include <wriringPiI2C.h>
-#include <iostream>
 
 #define POWER_CTL 0x2D
 
@@ -76,22 +75,54 @@ class ADXL345
 		return wiringPiI2CReadReg8(fd, bandwithRate) & 0x0F;
 	}
 
+	// Changes the range of the ADXL345
 	void SetRange(int range)
 	{
 		// TODO: add this method
 		;
 	}
 
+	// Reads the range the ADXL345 is set to and returns it.
 	int ReadRange()
 	{
 		// TODO: add this method
 		;
 	}
 
+	// Gets all the axes and returns them in a float array
 	float[] GetAllAxes()
 	{
-		// TODO: add this method
-		;
+		// First create an array for the raw data
+		int rawValues[5] = {};
+
+		// Then read the values from the data registers
+		rawValues[0] = wiringPiI2CReadReg8(fd, DATAX0);
+		rawValues[1] = wiringPiI2CReadReg8(fd, DATAX1);
+		rawValues[2] = wiringPiI2CReadReg8(fd, DATAY0);
+		rawValues[3] = wiringPiI2CReadReg8(fd, DATAY1);
+		rawValues[4] = wiringPiI2CReadReg8(fd, DATAZ0);
+		rawValues[5] = wiringPiI2CReadReg8(fd, DATAZ1);
+
+		// Do the magic bit stuff (I have no clue how bitwise operators work)
+		int xInt = rawValues[0] | (rawValues[1] << 8);
+		int yInt = rawValues[2] | (rawValues[3] << 8);
+		int zInt = rawValues[4] | (rawValues[5] << 8);
+
+		// Multiply the values by the scale multiplier to get the acceleration in g
+		float x = xInt * scaleMultiplier;
+		float y = yInt * scaleMultiplier;
+		float z = zInt * scaleMultiplier;
+
+		// Multiply the values by the gravity in m/s^2 to get the acceleration in m/s^2
+		x *= earthGravityMS2;
+		y *= earthGravityMS2;
+		z *= earthGravityMS2;
+
+		// Create an array for the values
+		float finalValues = { x, y, z };
+
+		// Return the values
+		return finalValues
 	}
 
 	float GetOneValue()
