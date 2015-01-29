@@ -9,6 +9,7 @@ class ADXL345
 	float earthGravityMS2 = 9.80665;
 	float scaleMultiplier = 0.0039;
 	int address;
+	int fd;
 	bool DEBUG = false;
 
     // ADXL345 Registers
@@ -31,18 +32,23 @@ class ADXL345
 	int range16G = 0x03;
 
 	int DATAX0 = 0x32;
+	int DATAX1 = 0x33;
+	int DATAY0 = 0x34;
+	int DATAY1 = 0x35;
+	int DATAZ0 = 0x36;
+	int DATAZ1 = 0x37
 
 	ADXL345(int inputAddress)
 	{
 		address = inputAddress;
 
-		wiringPiI2CSetup(address);
+		fd = wiringPiI2CSetup(address);
 	}
 
 	// Enables measurement by writing measre (0x08) to POWER_CTL, register 0x27.
 	void EnableMeasurement(void)
 	{
-		wiringPiI2CWrite(POWER_CTL, measure);
+		wiringPiI2CWriteReg8(fd, POWER_CTL, measure);
 	}
 
 	// Disables measurement by writing 0x00 to POWER_CTL, register 0x27
@@ -55,22 +61,19 @@ class ADXL345
 	// Reads and returns POWER_CTL, register 0x27
 	int ReadMeasurementMode()
 	{
-		// TODO: add this method
-		;
+		return wiringPiI2CReadReg8(fd, POWER_CTL);
 	}
 
 	// Changes the bandwithRate by writing the variable bandwithRate to bandwithRate, register 0x2C
-	void SetBandwithRate(int bandwithRate)
+	void SetBandwithRate(int rate)
 	{
-		// TODO: add this method
-		;
+		wiringPiI2CWriteReg8(fd, bandwithRate, rate);
 	}
 
 	// Reads bandwithRate, register 0x2C
 	int ReadBandwithRate()
 	{
-		// TODO: add this method
-		;
+		return wiringPiI2CReadReg8(fd, bandwithRate) & 0x0F;
 	}
 
 	void SetRange(int range)
