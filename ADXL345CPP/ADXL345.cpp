@@ -12,7 +12,7 @@ class ADXL345
 	bool DEBUG = false;
 
     // ADXL345 Registers
-	int dataFormat = 0x31;
+    int dataFormat = 0x31;
 	int bandwithRate = 0x2C;
 	//int POWER_CTL = 0x2D;
 	int measure = 0x08;
@@ -39,8 +39,61 @@ class ADXL345
 		wiringPiI2CSetup(address);
 	}
 
+	// Enables measurement by writing measre (0x08) to POWER_CTL, register 0x27.
 	void EnableMeasurement(void)
 	{
 		wiringPiI2CWrite(POWER_CTL, measure);
+	}
+
+	// Disables measurement by writing 0x00 to POWER_CTL, register 0x27
+	void DisableMeasurement()
+	{
+		// TODO: add this method
+		;
+	}
+
+	// Reads and returns POWER_CTL, register 0x27
+	int ReadMeasurementMode()
+	{
+		// TODO: add this method
+		;
+	}
+
+	// Changes the bandwithRate by writing the variable bandwithRate to bandwithRate, register 0x2C
+	void SetBandwithRate(int bandwithRate)
+	{
+		// TODO: add this method
+		;
+	}
+
+	// Reads bandwithRate, register 0x2C
+	int ReadBandwithRate()
+	{
+		// TODO: add this method
+		;
+	}
+
+	void SetRange(int range)
+	{
+		// TODO: add this method
+		;
+	}
+
+	int ReadRange()
+	{
+		// TODO: add this method
+		;
+	}
+
+	float[] GetAllAxes()
+	{
+		// TODO: add this method
+		;
+	}
+
+	float GetOneValue()
+	{
+		// TODO: add this method
+		;
 	}
 };
