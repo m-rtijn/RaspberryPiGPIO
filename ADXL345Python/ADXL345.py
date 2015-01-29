@@ -1,4 +1,4 @@
-0# This program handles the communication over I2C
+# This program handles the communication over I2C
 # between a Raspberry Pi and an ADXL345 Accelerometer
 # Made by: MrTijn/Tijndagamer
 # Copyright 2015
