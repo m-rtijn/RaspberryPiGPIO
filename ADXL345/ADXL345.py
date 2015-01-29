@@ -96,11 +96,30 @@ class ADXL345:
 
         self.bus.write_byte_data(self.address, self.dataFormat, value)
 
-    # Reads the range the ADXL345 is set to. This function is still a WIP
-    def ReadRange(self):
+    # Reads the range the ADXL345 is set to.
+    # If hex is True it will return hexadecimal values
+    # If hex is False it will return strings
+    def ReadRange(self, hex):
         rawValue = self.bus.read_byte_data(self.address, self.dataFormat)
 
-        return rawValue
+        if hex is True:
+            if rawValue == 8:
+                return self.range2G
+            elif rawValue == 9:
+                return self.range4G
+            elif rawValue == 10:
+                return self.range8G
+            elif rawValue == 11:
+                return self.range16G
+        elif hex is False:
+            if rawValue == 8:
+                return "2G"
+            elif rawValue == 9:
+                return "4G"
+            elif rawValue == 10:
+                return "8G"
+            elif rawValue == 11:
+                return "16G"
 
     # Gets all the axes and returns them in a dictionary
     def GetAllAxes(self, round = False):
