@@ -1,0 +1,15 @@
+TODO:
+Test:
+- EnableMeasurement
+- ReadMeasurementMode
+- SetBandwithRate
+- ReadBandwithRate
+- GetAllAxes
+- the constructor
+Add:
+- DisableMeasurement
+- SetRange
+- ReadRange
+- GetOneValue
+- more comments
+- example
