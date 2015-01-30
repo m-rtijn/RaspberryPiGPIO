@@ -4,7 +4,6 @@ Test:
 - ReadMeasurementMode
 - SetBandwithRate
 - ReadBandwithRate
-- GetAllAxes
 - the constructor
 Add:
 - DisableMeasurement
@@ -12,4 +11,6 @@ Add:
 - ReadRange
 - GetOneValue
 - more comments
+- GetAllAxes apparently can't return float[], so I'll have to figure out another way to do this.
+- Fix everything. 
 - example
