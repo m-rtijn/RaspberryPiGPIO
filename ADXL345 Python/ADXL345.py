@@ -64,22 +64,28 @@ class ADXL345:
         try:
             self.bus.write_byte_data(self.address, self.POWER_CTL, self.measure)
         except:
-            print("Error in EnableMeasurement(), are you sure that the ADXL345 is plugged in and wired correctly?")
+            print("Error in EnableMeasurement(), are you sure that the ADXL345 is wired correctly?")
 
     # Disables measurement by writing 0x00 to POWER_CTL, register 0x27
     def DisableMeasurement(self):
-        self.bus.write_byte_data(self.address, self.POWER_CTL, 0x00)
+        try:
+            self.bus.write_byte_data(self.address, self.POWER_CTL, 0x00)
+        except:
+            print("Error in DisableMeasurement(), are you sure that the ADXL345 is wired correctly?")
 
     # Reads POWER_CTL, register 0x27
     def ReadMeasurementMode(self):
-        return self.bus.read_byte_data(self.address, self.POWER_CTL) 
+        try:
+            return self.bus.read_byte_data(self.address, self.POWER_CTL)
+        except:
+            print("Error in ReadMeasurementMode(), are you sure that the ADXL345 is wired correctly?")
 
     # Changes the bandwithRate by writing rate to bandwithRate, register 0x2C
     def SetBandwithRate(self, rate):
         try:
             self.bus.write_byte_data(self.address, self.bandwithRate, rate)
         except:
-            print("Error in SetBandwithRate, are you sure that the ADXL345 is plugged in and wired correctly?")
+            print("Error in SetBandwithRate, are you sure that the ADXL345 is wired correctly?")
 
     # Reads bandwithRate, register 0x2C
     def ReadBandwithRate(self):
@@ -198,7 +204,7 @@ class ADXL345:
 
 # If a user runs this file just display the latest values
 if __name__ == "__main__":
-    accelerometer = ADXL345()
+    accelerometer = ADXL345(0x53)
     axes = accelerometer.GetAllAxes()
     print("x: %.3f" % (axes['x']))
     print("y: %.3f" % (axes['y']))
