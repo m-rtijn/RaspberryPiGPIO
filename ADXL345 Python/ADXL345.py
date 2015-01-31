@@ -89,12 +89,21 @@ class ADXL345:
 
     # Reads bandwithRate, register 0x2C
     def ReadBandwithRate(self):
-        rawBandwithRate = self.bus.read_byte_data(self.address, self.bandwithRate)
-        return rawBandwithRate & 0x0F
+        try:
+            rawBandwithRate = self.bus.read_byte_data(self.address, self.bandwithRate)
+            return rawBandwithRate & 0x0F
+        except:
+            print("Error in ReadBandwithRate, are you sure that the ADXL345 is wired correctly?")
 
     # Changes the range of the ADXL345. Available ranges are 2G, 4G, 8G and 16G.
     def SetRange(self, range):
-        value = self.bus.read_byte_data(self.address, self.dataFormat)
+        value = None
+        
+        try:
+            value = self.bus.read_byte_data(self.address, self.dataFormat)
+        except:
+            print("Error in ReadBandwithRate, are you sure that the ADXL345 is wired correctly?")
+            return
 
         value &= ~0x0F;
         value |= range;

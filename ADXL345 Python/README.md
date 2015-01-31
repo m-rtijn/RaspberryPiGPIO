@@ -9,3 +9,10 @@ you can install it using:
 	
 Once you've installed smbus you can import ADXL345.py in your own python programs.
 you have to make sure that ADXL345.py is in the same directory as your python program.
+
+If you don't know how to import it, it's really simple: just place this in your python
+program:
+
+```python
+	import ADXL345
+```
