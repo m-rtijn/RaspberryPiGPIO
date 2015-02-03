@@ -10,7 +10,7 @@ class MPU6050:
     # Global Variables
     address = None
     bus = smbus.SMBus(1)
-    scaleMultiplier2G = 16384
+    scaleMultiplier2G = 16384.0
 
     # MPU-6050 Registers
     
@@ -36,7 +36,7 @@ class MPU6050:
 
     # Returns the temperature in degrees celcius
     def GetTemperature(self):
-         rawValues = self.bus.read_i2c_block_date(self.address, self.TEMP_OUT0, 2)
+         rawValues = self.bus.read_i2c_block_data(self.address, self.TEMP_OUT0, 2)
 
          rawTemp = rawValues[0] | (rawValues[1] << 8)
 
@@ -58,8 +58,19 @@ class MPU6050:
 
     # Gets and returns the X, Y and Z values from the accelerometer
     def GetAllAccelValues(self):
-        # Todo: Add this
-        pass
+        rawValues = self.bus.read_i2c_block_data(self.address, self.ACCEL_XOUT0, 6)
+
+        x = rawValues[0] | (rawValues[1] << 8)
+        y = rawValues[2] | (rawValues[3] << 8)
+        z = rawValues[4] | (rawValues[5] << 8)
+
+        # TODO: Add options to use the correct scale multiplier for the current range
+        x = x / scaleMultiplier2G
+        y = y / scaleMultiplier2G
+        z = z / scaleMultiplier2G
+
+        return {'x': x, 'y': y, 'z': z}
+        
 
     # Sets the range of the gyroscope to range
     def SetGyroRange(self, range):
