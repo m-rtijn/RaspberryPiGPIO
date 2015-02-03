@@ -9,6 +9,7 @@ class MPU6050:
 
     # Global Variables
     address = None
+    bus = smbus.SMBus(1)
     scaleMultiplier2G = 16384
 
     # MPU-6050 Registers
@@ -35,8 +36,15 @@ class MPU6050:
 
     # Returns the temperature in degrees celcius
     def GetTemperature(self):
-        # Todo: Add this
-        pass
+         rawValues = self.bus.read_i2c_block_date(self.address, self.TEMP_OUT0, 2)
+
+         rawTemp = rawValues[0] | (rawValues[1] << 8)
+
+         # Get the actual temperature using the formule given in the MPU-6050 Register Map and Descriptions revision 4.2, page 30
+         actualTemp = (rawTemp / 340) + 36.53
+
+         # Return the temperature
+         return actualTemp
 
     # Sets the range of the accelerometer to range
     def SetAccelRange(self, range):
