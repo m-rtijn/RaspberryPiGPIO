@@ -10,7 +10,10 @@ class MPU6050:
     # Global Variables
     address = None
     bus = smbus.SMBus(1)
-    scaleMultiplier2G = 16384.0
+    accelScaleMultiplier2G = 16384.0
+    accelScaleMultiplier4G = 8192.0
+    accelScaleMultiplier8G = 4096.0
+    accelScaleMultiplier16G = 2048.0
 
     # MPU-6050 Registers
     
@@ -33,6 +36,23 @@ class MPU6050:
 
     def __init__(self, address):
         self.address = address
+
+    # I2C communication methods
+
+    def ReadWord(self, register):
+        # Read the data from the registers
+        high = self.bus.read_byte_data(self.address, register)
+        low = self.bus.read_byte_data(self.address, register + 1)
+
+        # Bit magic
+        value = (high << 8) + low
+
+        if (value >= 0x8000):
+            return -((65535 - value) + 1)
+        else:
+            return value
+
+    # MPU-6050 Methods
 
     # Returns the temperature in degrees celcius
     def GetTemperature(self):
@@ -58,19 +78,17 @@ class MPU6050:
 
     # Gets and returns the X, Y and Z values from the accelerometer
     def GetAllAccelValues(self):
-        rawValues = self.bus.read_i2c_block_data(self.address, self.ACCEL_XOUT0, 6)
-
-        x = rawValues[0] | (rawValues[1] << 8)
-        y = rawValues[2] | (rawValues[3] << 8)
-        z = rawValues[4] | (rawValues[5] << 8)
+        # Read the data from the MPU-6050
+        x = self.ReadWord(self.ACCEL_XOUT0)
+        y = self.ReadWord(self.ACCEL_YOUT0)
+        z = self.ReadWord(self.ACCEL_ZOUT0)
 
         # TODO: Add options to use the correct scale multiplier for the current range
-        x = x / scaleMultiplier2G
-        y = y / scaleMultiplier2G
-        z = z / scaleMultiplier2G
+        x = x / self.accelScaleMultiplier2G
+        y = y / self.accelScaleMultiplier2G
+        z = z / self.accelScaleMultiplier2G
 
         return {'x': x, 'y': y, 'z': z}
-        
 
     # Sets the range of the gyroscope to range
     def SetGyroRange(self, range):
@@ -84,8 +102,13 @@ class MPU6050:
 
     # Gets and returns the X, Y and Z values from the gyroscope
     def GetAllGyroValues(self):
-        # Todo: Add this
-        pass
+        rawValues = self.bus.read_i2c_block_data(self.address, self.GYRO_XOUT0, 6)
+
+        x = rawValues[0] | (rawValues[1] << 8)
+        y = rawValues[2] | (rawValues[3] << 8)
+        z = rawValues[4] | (rawValues[5] << 8)
+
+        
 
     # Gets and returns the X, Y and Z values from the accelerometer and from the gyroscope and the temperature from the temperature sensor
     def GetAllValues(self):
