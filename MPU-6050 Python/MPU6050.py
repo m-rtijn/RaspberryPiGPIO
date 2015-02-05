@@ -10,12 +10,20 @@ class MPU6050:
     # Global Variables
     address = None
     bus = smbus.SMBus(1)
+
+    # Scale multipliers
     accelScaleMultiplier2G = 16384.0
     accelScaleMultiplier4G = 8192.0
     accelScaleMultiplier8G = 4096.0
     accelScaleMultiplier16G = 2048.0
+    gyroScaleMultiplier250Deg = 131.0
+    gyroScaleMultiplier500Deg = 65.5
+    gyroScaleMultiplier1000Deg = 32.8
+    gyroScaleMultiplier2000Deg = 16.4
 
     # MPU-6050 Registers
+    PWR_MGMT_1 = 0x6B
+    PWR_MGMT_2 = 0x6C
     
     ACCEL_XOUT0 = 0x3B
     ACCEL_XOUT1 = 0x3C
@@ -37,9 +45,12 @@ class MPU6050:
     def __init__(self, address):
         self.address = address
 
+        # Wake up the MPU-6050 since it starts in sleep mode
+        self.bus.write_byte_data(self.address, self.PWR_MGMT_1, 0x00)
+
     # I2C communication methods
 
-    def ReadWord(self, register):
+    def ReadI2CWord(self, register):
         # Read the data from the registers
         high = self.bus.read_byte_data(self.address, register)
         low = self.bus.read_byte_data(self.address, register + 1)
@@ -54,17 +65,16 @@ class MPU6050:
 
     # MPU-6050 Methods
 
-    # Returns the temperature in degrees celcius
-    def GetTemperature(self):
-         rawValues = self.bus.read_i2c_block_data(self.address, self.TEMP_OUT0, 2)
+    # Returns the temperature in degrees celcius.
+    def GetTemp(self):
+        # Get the raw data
+        rawTemp = self.ReadI2CWord(self.TEMP_OUT0)
 
-         rawTemp = rawValues[0] | (rawValues[1] << 8)
+        # Get the actual temperature using the formule given in the MPU-6050 Register Map and Descriptions revision 4.2, page 30
+        actualTemp = (rawTemp / 340) + 36.53
 
-         # Get the actual temperature using the formule given in the MPU-6050 Register Map and Descriptions revision 4.2, page 30
-         actualTemp = (rawTemp / 340) + 36.53
-
-         # Return the temperature
-         return actualTemp
+        # Return the temperature
+        return actualTemp
 
     # Sets the range of the accelerometer to range
     def SetAccelRange(self, range):
@@ -79,9 +89,9 @@ class MPU6050:
     # Gets and returns the X, Y and Z values from the accelerometer
     def GetAllAccelValues(self):
         # Read the data from the MPU-6050
-        x = self.ReadWord(self.ACCEL_XOUT0)
-        y = self.ReadWord(self.ACCEL_YOUT0)
-        z = self.ReadWord(self.ACCEL_ZOUT0)
+        x = self.ReadI2CWord(self.ACCEL_XOUT0)
+        y = self.ReadI2CWord(self.ACCEL_YOUT0)
+        z = self.ReadI2CWord(self.ACCEL_ZOUT0)
 
         # TODO: Add options to use the correct scale multiplier for the current range
         x = x / self.accelScaleMultiplier2G
@@ -102,13 +112,17 @@ class MPU6050:
 
     # Gets and returns the X, Y and Z values from the gyroscope
     def GetAllGyroValues(self):
-        rawValues = self.bus.read_i2c_block_data(self.address, self.GYRO_XOUT0, 6)
+        # Read the raw data from the MPU-6050
+        x = self.ReadI2CWord(self.GYRO_XOUT0)
+        y = self.ReadI2CWord(self.GYRO_YOUT0)
+        z = self.ReadI2CWord(self.GYRO_ZOUT0)
 
-        x = rawValues[0] | (rawValues[1] << 8)
-        y = rawValues[2] | (rawValues[3] << 8)
-        z = rawValues[4] | (rawValues[5] << 8)
+        # TODO: Add options to use the correct scale multiplier for the current range
+        x = x / self.gyroScaleMultiplier250Deg
+        y = y / self.gyroScaleMultiplier250Deg
+        z = z / self.gyroScaleMultiplier250Deg
 
-        
+        return {'x': x, 'y': y, 'z': z}      
 
     # Gets and returns the X, Y and Z values from the accelerometer and from the gyroscope and the temperature from the temperature sensor
     def GetAllValues(self):
