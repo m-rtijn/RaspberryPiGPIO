@@ -99,9 +99,13 @@ class MPU6050:
         self.bus.write_byte_data(self.address, self.ACCEL_CONFIG, accelRange)
 
     # Reads the range the accelerometer is set to
-    def ReadAccelRange(self):
-        # Todo: Add this
-        pass
+    # If raw is True, it will return the raw value
+    def ReadAccelRange(self, raw = False):
+        # Get the raw value
+        rawData = self.bus.read_byte_data(self.address, self.ACCEL_CONFIG)
+
+        if raw is True:
+            return rawData
 
     # Gets and returns the X, Y and Z values from the accelerometer
     def GetAllAccelValues(self):
@@ -110,10 +114,24 @@ class MPU6050:
         y = self.ReadI2CWord(self.ACCEL_YOUT0)
         z = self.ReadI2CWord(self.ACCEL_ZOUT0)
 
-        # TODO: Add options to use the correct scale multiplier for the current range
-        x = x / self.accelScaleMultiplier2G
-        y = y / self.accelScaleMultiplier2G
-        z = z / self.accelScaleMultiplier2G
+        scaleMultiplier = None
+        accelRange = ReadAccelRange(True)
+
+        if accelRange == self.accelRange2G:
+            accelScaleMultiplier = self.accelScaleMultiplier2G
+        elif accelRange == self.accelRange4G:
+            accelScaleMultiplier = self.accelScaleMultiplier4G
+        elif accelRange == self.accelRange8G:
+            accelScaleMultiplier = self.accelScaleMultiplier8G
+        elif accelRange == self.accelRange16G:
+            accelScaleMultiplier = self.accelScaleMultiplier16G
+        else:
+            print("Unkown range - accelScaleMultiplier set to self.accelScaleMultiplier2G")
+            accelScaleMultiplier = self.accelScaleMultiplier2G
+        
+        x = x / accelScaleMultiplier
+        y = y / accelScaleMultiplier
+        z = z / accelScaleMultiplier
 
         return {'x': x, 'y': y, 'z': z}
 
