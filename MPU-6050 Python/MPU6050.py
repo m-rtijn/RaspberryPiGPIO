@@ -21,6 +21,17 @@ class MPU6050:
     gyroScaleMultiplier1000Deg = 32.8
     gyroScaleMultiplier2000Deg = 16.4
 
+    # Pre-defined ranges
+    accelRange2G = 0x00
+    accelRange4G = 0x08
+    accelRange8G = 0x10
+    accelRange16G = 0x18
+
+    gyroRange250Deg = 0x00
+    gyroRange500Deg = 0x08
+    gyroRange1000Deg = 0x10
+    gyroRange2000Deg = 0x18
+
     # MPU-6050 Registers
     PWR_MGMT_1 = 0x6B
     PWR_MGMT_2 = 0x6C
@@ -41,6 +52,9 @@ class MPU6050:
     GYRO_YOUT1 = 0x46
     GYRO_ZOUT0 = 0x47
     GYRO_ZOUT1 = 0x48
+
+    ACCEL_CONFIG = 0x1C
+    GYRO_CONFIG = 0x1B
 
     def __init__(self, address):
         self.address = address
@@ -77,9 +91,12 @@ class MPU6050:
         return actualTemp
 
     # Sets the range of the accelerometer to range
-    def SetAccelRange(self, range):
-        # Todo: Add this
-        pass
+    def SetAccelRange(self, accelRange):
+        # First change it to 0x00 to make sure we write the correct value later
+        self.bus.write_byte_data(self.address, self.ACCEL_CONFIG, 0x00)
+
+        # Write the new range to the ACCEL_CONFIG register
+        self.bus.write_byte_data(self.address, self.ACCEL_CONFIG, accelRange)
 
     # Reads the range the accelerometer is set to
     def ReadAccelRange(self):
@@ -102,8 +119,11 @@ class MPU6050:
 
     # Sets the range of the gyroscope to range
     def SetGyroRange(self, range):
-        # Todo: Add this
-        pass
+        # First change it to 0x00 to make sure we write the correct value later
+        self.bus.write_byte_data(self.address, self.GYRO_CONFIG, 0x00)
+
+        # Write the new range to the ACCEL_CONFIG register
+        self.bus.write_byte_data(self.address, self.GYRO_CONFIG, accelRange)
 
     # Reads the range the gyroscope is set to
     def ReadGyroRange(self):
