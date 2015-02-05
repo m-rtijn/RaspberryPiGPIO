@@ -79,12 +79,13 @@ class MPU6050:
 
     # MPU-6050 Methods
 
-    # Returns the temperature in degrees celcius.
+    # Returns the temperature in degrees celcius read from the temperature sensor in the MPU-6050
     def GetTemp(self):
         # Get the raw data
         rawTemp = self.ReadI2CWord(self.TEMP_OUT0)
 
-        # Get the actual temperature using the formule given in the MPU-6050 Register Map and Descriptions revision 4.2, page 30
+        # Get the actual temperature using the formule given in the
+        # MPU-6050 Register Map and Descriptions revision 4.2, page 30
         actualTemp = (rawTemp / 340) + 36.53
 
         # Return the temperature
@@ -100,12 +101,24 @@ class MPU6050:
 
     # Reads the range the accelerometer is set to
     # If raw is True, it will return the raw value
+    # If raw is False, it will return an integer: -1, 2, 4, 8 or 16. When it returns -1 something went wrong.
     def ReadAccelRange(self, raw = False):
         # Get the raw value
         rawData = self.bus.read_byte_data(self.address, self.ACCEL_CONFIG)
 
         if raw is True:
             return rawData
+        elif raw is False:
+            if rawData == self.accelRange2G:
+                return 2
+            elif rawData == self.accelRange4G:
+                return 4
+            elif rawData == self.accelRange8G:
+                return 8
+            elif rawData == self.accelRange16G:
+                return 16
+            else:
+                return -1
 
     # Gets and returns the X, Y and Z values from the accelerometer
     def GetAllAccelValues(self):

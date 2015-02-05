@@ -1,6 +1,5 @@
 TODO:
 Add:
-- Methods read the range the accelerometer is set to (WIP)
 - Methods read the range the gyroscope is set to (WIP)
 - In GetAllAccelValues:
 	- Options to use the correct scale multiplier for the current range
@@ -17,3 +16,4 @@ Test:
 - GetAllGyroValues
 - GetAllAccelValues
 - ReadAccelRange
+- ReadGyroRange
