@@ -144,9 +144,12 @@ class MPU6050:
         self.bus.write_byte_data(self.address, self.GYRO_CONFIG, accelRange)
 
     # Reads the range the gyroscope is set to
-    def ReadGyroRange(self):
-        # Todo: Add this
-        pass
+    def ReadGyroRange(self, raw = False):
+        # Get the raw value
+        rawData = self.bus.read_byte_data(self.address, self.GYRO_CONFIG)
+
+        if raw is True:
+            return rawData
 
     # Gets and returns the X, Y and Z values from the gyroscope
     def GetAllGyroValues(self):
