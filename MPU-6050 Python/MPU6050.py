@@ -121,7 +121,7 @@ class MPU6050:
                 return -1
 
     # Gets and returns the X, Y and Z values from the accelerometer
-    def GetAllAccelValues(self):
+    def GetAccelValues(self):
         # Read the data from the MPU-6050
         x = self.ReadI2CWord(self.ACCEL_XOUT0)
         y = self.ReadI2CWord(self.ACCEL_YOUT0)
@@ -165,7 +165,7 @@ class MPU6050:
             return rawData
 
     # Gets and returns the X, Y and Z values from the gyroscope
-    def GetAllGyroValues(self):
+    def GetGyroValues(self):
         # Read the raw data from the MPU-6050
         x = self.ReadI2CWord(self.GYRO_XOUT0)
         y = self.ReadI2CWord(self.GYRO_YOUT0)
@@ -180,5 +180,8 @@ class MPU6050:
 
     # Gets and returns the X, Y and Z values from the accelerometer and from the gyroscope and the temperature from the temperature sensor
     def GetAllValues(self):
-        # Todo: Add this
-        pass
+        temp = GetTemp()
+        accel = GetAllAccelValues()
+        gyro = GetAllGyroValues()
+
+        return [accel, gyro, temp]
