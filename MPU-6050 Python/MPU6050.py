@@ -128,7 +128,7 @@ class MPU6050:
         z = self.ReadI2CWord(self.ACCEL_ZOUT0)
 
         scaleMultiplier = None
-        accelRange = ReadAccelRange(True)
+        accelRange = self.ReadAccelRange(True)
 
         if accelRange == self.accelRange2G:
             accelScaleMultiplier = self.accelScaleMultiplier2G
