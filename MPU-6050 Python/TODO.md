@@ -5,10 +5,10 @@ Add:
 	- Options to use the correct scale multiplier for the current range
 - Method to disable the temp sensor
 - Methods to change the clock source of the device
-- Example script
 Fix:
 - Nothing
 Test:
 - SetGyroRange
 - ReadGyroRange
 - GetAllValues
+- example.py
