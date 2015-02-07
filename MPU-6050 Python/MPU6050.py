@@ -11,15 +11,15 @@ class MPU6050:
     address = None
     bus = smbus.SMBus(1)
 
-    # Scale multipliers
-    accelScaleMultiplier2G = 16384.0
-    accelScaleMultiplier4G = 8192.0
-    accelScaleMultiplier8G = 4096.0
-    accelScaleMultiplier16G = 2048.0
-    gyroScaleMultiplier250Deg = 131.0
-    gyroScaleMultiplier500Deg = 65.5
-    gyroScaleMultiplier1000Deg = 32.8
-    gyroScaleMultiplier2000Deg = 16.4
+    # Scale Modifiers
+    accelScaleModifier2G = 16384.0
+    accelScaleModifier4G = 8192.0
+    accelScaleModifier8G = 4096.0
+    accelScaleModifier16G = 2048.0
+    gyroScaleModifier250Deg = 131.0
+    gyroScaleModifier500Deg = 65.5
+    gyroScaleModifier1000Deg = 32.8
+    gyroScaleModifier2000Deg = 16.4
 
     # Pre-defined ranges
     accelRange2G = 0x00
@@ -121,30 +121,30 @@ class MPU6050:
                 return -1
 
     # Gets and returns the X, Y and Z values from the accelerometer
-    def GetAccelValues(self):
+    def GetAccelData(self):
         # Read the data from the MPU-6050
         x = self.ReadI2CWord(self.ACCEL_XOUT0)
         y = self.ReadI2CWord(self.ACCEL_YOUT0)
         z = self.ReadI2CWord(self.ACCEL_ZOUT0)
 
-        scaleMultiplier = None
+        accelScaleModifier = None
         accelRange = self.ReadAccelRange(True)
 
         if accelRange == self.accelRange2G:
-            accelScaleMultiplier = self.accelScaleMultiplier2G
+            accelScaleModifier = self.accelScaleModifier2G
         elif accelRange == self.accelRange4G:
-            accelScaleMultiplier = self.accelScaleMultiplier4G
+            accelScaleModifier = self.accelScaleModifier4G
         elif accelRange == self.accelRange8G:
-            accelScaleMultiplier = self.accelScaleMultiplier8G
+            accelScaleModifier = self.accelScaleModifier8G
         elif accelRange == self.accelRange16G:
-            accelScaleMultiplier = self.accelScaleMultiplier16G
+            accelScaleModifier = self.accelScaleModifier16G
         else:
-            print("Unkown range - accelScaleMultiplier set to self.accelScaleMultiplier2G")
-            accelScaleMultiplier = self.accelScaleMultiplier2G
+            print("Unkown range - accelScaleModifier set to self.accelScaleModifier2G")
+            accelScaleModifier = self.accelScaleModifier2G
         
-        x = x / accelScaleMultiplier
-        y = y / accelScaleMultiplier
-        z = z / accelScaleMultiplier
+        x = x / accelScaleModifier
+        y = y / accelScaleModifier
+        z = z / accelScaleModifier
 
         return {'x': x, 'y': y, 'z': z}
 
@@ -165,23 +165,39 @@ class MPU6050:
             return rawData
 
     # Gets and returns the X, Y and Z values from the gyroscope
-    def GetGyroValues(self):
+    def GetGyroData(self):
         # Read the raw data from the MPU-6050
         x = self.ReadI2CWord(self.GYRO_XOUT0)
         y = self.ReadI2CWord(self.GYRO_YOUT0)
         z = self.ReadI2CWord(self.GYRO_ZOUT0)
 
-        # TODO: Add options to use the correct scale multiplier for the current range
-        x = x / self.gyroScaleMultiplier250Deg
-        y = y / self.gyroScaleMultiplier250Deg
-        z = z / self.gyroScaleMultiplier250Deg
+        gyroScaleModifier = None
+        gyroRange = ReadGyroRange(True)
+        
+        if gyroRange == self.gyroRange250Deg:
+            gyroScaleModifier = self.gyroScaleModifier250Deg
+        elif gyroRange == self.gyroRange500Deg:
+            gyroScaleModifier = self.gyroScaleModifier500Deg
+        elif gyroRange == self.gyroRange1000Deg:
+            gyroScaleModifier = self.gyroScaleModifier1000Deg
+        elif gyroRange == self.gyroRange2000Deg:
+            gyroScaleModifier = self.gyroScaleModifier2000Deg
+        else:
+            print("Unkown range - accelScaleModifier set to self.accelScaleModifier2G")
+            gyroScaleModifier = self.gyroScaleModifier250Deg
+        
+
+        # TODO: Add options to use the correct scale Modifier for the current range
+        x = x / self.gyroScaleModifier
+        y = y / self.gyroScaleModifier
+        z = z / self.gyroScaleModifier
 
         return {'x': x, 'y': y, 'z': z}      
 
     # Gets and returns the X, Y and Z values from the accelerometer and from the gyroscope and the temperature from the temperature sensor
-    def GetAllValues(self):
+    def GetAllData(self):
         temp = GetTemp()
-        accel = GetAllAccelValues()
-        gyro = GetAllGyroValues()
+        accel = GetAccelData()
+        gyro = GetGyroData()
 
         return [accel, gyro, temp]
