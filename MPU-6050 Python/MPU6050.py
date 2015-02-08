@@ -100,7 +100,7 @@ class MPU6050:
         self.bus.write_byte_data(self.address, self.ACCEL_CONFIG, accelRange)
 
     # Reads the range the accelerometer is set to
-    # If raw is True, it will return the raw value
+    # If raw is True, it will return the raw value from the ACCEL_CONFIG register
     # If raw is False, it will return an integer: -1, 2, 4, 8 or 16. When it returns -1 something went wrong.
     def ReadAccelRange(self, raw = False):
         # Get the raw value
@@ -146,23 +146,38 @@ class MPU6050:
         y = y / accelScaleModifier
         z = z / accelScaleModifier
 
+        # TODO: Add option to return in g or in m/s^2
+
         return {'x': x, 'y': y, 'z': z}
 
     # Sets the range of the gyroscope to range
-    def SetGyroRange(self, range):
+    def SetGyroRange(self, gyroRange):
         # First change it to 0x00 to make sure we write the correct value later
         self.bus.write_byte_data(self.address, self.GYRO_CONFIG, 0x00)
 
         # Write the new range to the ACCEL_CONFIG register
-        self.bus.write_byte_data(self.address, self.GYRO_CONFIG, accelRange)
+        self.bus.write_byte_data(self.address, self.GYRO_CONFIG, gyroRange)
 
     # Reads the range the gyroscope is set to
+    # If raw is True, it will return the raw value from the GYRO_CONFIG register
+    # If raw is False, it will return 250, 500, 1000, 2000 or -1. If the returned value is equal to -1 something went wrong.
     def ReadGyroRange(self, raw = False):
         # Get the raw value
         rawData = self.bus.read_byte_data(self.address, self.GYRO_CONFIG)
 
         if raw is True:
             return rawData
+        elif raw is False:
+            if rawData == self.gyroRange250Deg:
+                return 250
+            elif rawData == self.gyroRange500Deg:
+                return 500
+            elif rawData == self.gyroRange1000Deg:
+                return 1000
+            elif rawData == self.gyroRange2000Deg:
+                return 2000
+            else:
+                return -1
 
     # Gets and returns the X, Y and Z values from the gyroscope
     def GetGyroData(self):
@@ -172,7 +187,7 @@ class MPU6050:
         z = self.ReadI2CWord(self.GYRO_ZOUT0)
 
         gyroScaleModifier = None
-        gyroRange = ReadGyroRange(True)
+        gyroRange = self.ReadGyroRange(True)
         
         if gyroRange == self.gyroRange250Deg:
             gyroScaleModifier = self.gyroScaleModifier250Deg
@@ -186,11 +201,9 @@ class MPU6050:
             print("Unkown range - gyroScaleModifier set to self.gyroScaleModifier250Deg")
             gyroScaleModifier = self.gyroScaleModifier250Deg
         
-
-        # TODO: Add options to use the correct scale Modifier for the current range
-        x = x / self.gyroScaleModifier
-        y = y / self.gyroScaleModifier
-        z = z / self.gyroScaleModifier
+        x = x / gyroScaleModifier
+        y = y / gyroScaleModifier
+        z = z / gyroScaleModifier
 
         return {'x': x, 'y': y, 'z': z}      
 
