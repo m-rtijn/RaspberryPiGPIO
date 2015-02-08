@@ -183,7 +183,7 @@ class MPU6050:
         elif gyroRange == self.gyroRange2000Deg:
             gyroScaleModifier = self.gyroScaleModifier2000Deg
         else:
-            print("Unkown range - accelScaleModifier set to self.accelScaleModifier2G")
+            print("Unkown range - gyroScaleModifier set to self.gyroScaleModifier250Deg")
             gyroScaleModifier = self.gyroScaleModifier250Deg
         
 
