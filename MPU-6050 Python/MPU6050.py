@@ -8,6 +8,7 @@ import smbus
 class MPU6050:
 
     # Global Variables
+    gravityMS2 = 9.80665
     address = None
     bus = smbus.SMBus(1)
 
@@ -121,7 +122,9 @@ class MPU6050:
                 return -1
 
     # Gets and returns the X, Y and Z values from the accelerometer
-    def GetAccelData(self):
+    # If g is True, it will return the data in g
+    # If g is False, it will return the data in m/s^2
+    def GetAccelData(self, g = False):
         # Read the data from the MPU-6050
         x = self.ReadI2CWord(self.ACCEL_XOUT0)
         y = self.ReadI2CWord(self.ACCEL_YOUT0)
@@ -146,9 +149,14 @@ class MPU6050:
         y = y / accelScaleModifier
         z = z / accelScaleModifier
 
-        # TODO: Add option to return in g or in m/s^2
-
-        return {'x': x, 'y': y, 'z': z}
+        if g is True:
+            return {'x': x, 'y': y, 'z': z}
+        elif g is False:
+            x = x * gravityMS2
+            y = y * gravityMS2
+            z = z * gravityMS2
+            return {'x': x, 'y': y, 'z': z}
+        
 
     # Sets the range of the gyroscope to range
     def SetGyroRange(self, gyroRange):
