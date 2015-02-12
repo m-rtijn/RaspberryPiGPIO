@@ -7,10 +7,4 @@ Add:
 Fix:
 
 Test:
-- __init__
-- ReadSigned16Bit
-- ReadUnSigned16Bit
-- ReadCalibrationData
-- GetRawTemp
 - GetRawPressure
-- GetTemp

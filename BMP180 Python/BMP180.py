@@ -48,7 +48,7 @@ class BMP180:
         self.address = address
         
         # Get the calibration data from the BMP180
-        ReadCalibrationData()
+        self.ReadCalibrationData()
 
     # I2C methods
 
@@ -90,13 +90,13 @@ class BMP180:
     # Reads and returns the raw temperature data
     def GetRawTemp(self):
         # Write 0x2E to controlReg, 0xF4, to start the measurement
-        self.bus.write_byte_data(self.address, controlReg, 0x2E)
+        self.bus.write_byte_data(self.address, self.controlReg, 0x2E)
 
         # Wait 4,5 ms
         sleep(0.0045)
 
         # Read the raw data from the dataReg, 0xF6
-        rawData = ReadUnsigned16Bit(self.dataReg)
+        rawData = self.ReadUnsigned16Bit(self.dataReg)
 
         # Return the raw data
         return rawData
@@ -104,7 +104,7 @@ class BMP180:
     # Reads and returns the raw pressure data
     def GetRawPressure(self):
         # Write 0x43 + (self.mode << 6) to the controlReg, 0xF4, to start the measurement
-        self.bus.write_byte_data(self.address, controlReg, 0x34 + (self.mode << 6))
+        self.bus.write_byte_data(self.address, self.controlReg, 0x34 + (self.mode << 6))
 
         # Sleep for 8 ms.
         # TODO: Way to use the correct wait time for the current mode
@@ -129,8 +129,9 @@ class BMP180:
         B5 = 0
         actualTemp = 0.0
 
+        # These calculations are from the BMP180 datasheet, page 15
         X1 = ((rawTemp - self.calAC6) * self.calAC5) / math.pow(2, 15)
-        X2 = (calMC * math.pow(2, 11)) / (X1 + self.calMD)
+        X2 = (self.calMC * math.pow(2, 11)) / (X1 + self.calMD)
         B5 = X1 + X2
         actualTemp = ((B5 + 8) / math.pow(2, 4)) / 10
 
