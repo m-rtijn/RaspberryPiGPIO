@@ -4,11 +4,16 @@
 # Copyright 2015
 
 import smbus
+from time import sleep
 
 class BMP180:
     # Global variables
     address = None
     bus = smbus.SMBus(1)
+
+    # BMP180 registers
+    controlReg = 0xF4
+    dataReg = 0xF6
 
     # Calibration data registers
     calAC1Reg = 0xAA
@@ -65,7 +70,8 @@ class BMP180:
         return (high << 8) + low
 
     # BMP180 interaction methods
-    
+
+    # Reads and stores the raw calibration data
     def ReadCalibrationData(self):
         self.calAC1 = self.ReadSigned16Bit(self.calAC1Reg)
         self.calAC2 = self.ReadSigned16Bit(self.calAC2Reg)
@@ -78,3 +84,29 @@ class BMP180:
         self.calMB = self.ReadSigned16Bit(self.calMBReg)
         self.calMC = self.ReadSigned16Bit(self.calMCReg)
         self.calMD = self.ReadSigned16Bit(self.calMDReg)
+
+    # Reads and returns the raw temperature data
+    def ReadRawTemp(self):
+        # Write 0x2E to controlReg, 0xF4
+        self.bus.write_byte_data(self.address, controlReg, 0x2E)
+
+        # Wait 4,5 ms
+        sleep(0.0045)
+
+        # Read the raw data from the dataReg, 0xF6
+        rawData = ReadUnsigned16Bit(self.dataReg)
+
+        # Return the raw data
+        return rawData
+
+    def ReadRawPressure(self):
+        pass
+
+    def GetTemp(self):
+        pass
+
+    def GetPressure(self):
+        pass
+
+    def GetAltitude(self):
+        pass
