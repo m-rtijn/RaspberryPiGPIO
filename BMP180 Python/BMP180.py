@@ -122,7 +122,7 @@ class BMP180:
 
     # Reads and returns the actual temperature
     def GetTemp(self):
-        rawTemp = self.GetRawTemp()
+        UT = self.GetRawTemp()
 
         X1 = 0
         X2 = 0
@@ -130,15 +130,60 @@ class BMP180:
         actualTemp = 0.0
 
         # These calculations are from the BMP180 datasheet, page 15
-        X1 = ((rawTemp - self.calAC6) * self.calAC5) / math.pow(2, 15)
+        X1 = ((UT - self.calAC6) * self.calAC5) / math.pow(2, 15)
         X2 = (self.calMC * math.pow(2, 11)) / (X1 + self.calMD)
         B5 = X1 + X2
         actualTemp = ((B5 + 8) / math.pow(2, 4)) / 10
 
         return actualTemp
 
+    # Reads and returns the actual pressure in Pa (1 Pa = 1 N/m^2)
     def GetPressure(self):
-        pass
+        UP = self.GetRawPressure()
+        UT = self.GetRawTemp()
+        B3 = 0
+        B4 = 0
+        B5 = 0
+        B6 = 0
+        B7 = 0
+        X1 = 0
+        X2 = 0
+        X3 = 0
+        pressure = 0
 
-    def GetAltitude(self):
-        pass
+        # These calculations are from the BMP180 datasheet, page 15
+        X1 = ((UT - self.calAC6) * self.calAC5) / math.pow(2, 15)
+        X2 = (self.calMC * math.pow(2, 11)) / (X1 + self.calMD)
+        B5 = X1 + X2
+
+        B6 = B5 - 4000
+        X1 = (self.calB2 * (B6 * B6 / math.pow(2, 12))) / math.pow(2, 11)
+        X2 = self.calAC2 * B6 / math.pow(2, 11)
+        X3 = X1 + X2
+        B3 = (((self.calAC1 * 4 + X3) << self.mode) + 2) / 4
+        X1 = self.calAC3 * B6 / math.pow(2, 13)
+        X2 = (self.calB1 * (B6 * B6 / math.pow(2, 12))) / math.pow(2, 16)
+        X3 = ((X1 + X2) + 2) / math.pow(2, 2)
+        B4 = self.calAC4 * (X3 + 32768) / math.pow(2,15)
+        B7 = (UP - B3) * (50000 >> self.mode)
+        
+        if B7 < 0x80000000:
+            pressure = (B7 * 2) / B4
+        else:
+            pressure = (B7 / B4) * 2
+
+        X1 = (pressure / math.pow(2, 8)) * (pressure / math.pow(2, 8))
+        X1 = (X1 * 3038) / math.pow(2, 16)
+        X2 = (-7357 * p) / math.pow(2, 16)
+        pressure = pressure + (X1 + X1 + 3791) / math.pow(2, 4)
+
+        return pressure
+
+    # Gets and returns the altitude in meters 
+    def GetAltitude(self, seaLevelPressure = 101325):
+        altitude = 0.0
+        pressure = float(self.GetPressure())
+
+        altitude = 44330.0 * (1.0 - math.pow(pressure / seaLevelPressure, 0.00019029495))
+
+        return altitude
