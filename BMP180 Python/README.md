@@ -3,14 +3,14 @@ combo, just like my ADXL345 program.
 
 This is still a WIP and only the following methods work and have been tested:
 
-*__init__
+* __init__
 
-*ReadSigned16Bit
+* ReadSigned16Bit
 
-*ReadUnsigned16Bit
+* ReadUnsigned16Bit
 
-*ReadCalibrationData
+* ReadCalibrationData
 
-*GetRawTemp
+* GetRawTemp
 
-*GetTemp
+* GetTemp
