@@ -4,12 +4,14 @@
 # Copyright 2015
 
 import smbus
+import math
 from time import sleep
 
 class BMP180:
     # Global variables
     address = None
     bus = smbus.SMBus(1)
+    mode = 1 # TODO: Add a way to change the mode
 
     # BMP180 registers
     controlReg = 0xF4
@@ -86,8 +88,8 @@ class BMP180:
         self.calMD = self.ReadSigned16Bit(self.calMDReg)
 
     # Reads and returns the raw temperature data
-    def ReadRawTemp(self):
-        # Write 0x2E to controlReg, 0xF4
+    def GetRawTemp(self):
+        # Write 0x2E to controlReg, 0xF4, to start the measurement
         self.bus.write_byte_data(self.address, controlReg, 0x2E)
 
         # Wait 4,5 ms
@@ -99,11 +101,40 @@ class BMP180:
         # Return the raw data
         return rawData
 
-    def ReadRawPressure(self):
-        pass
+    # Reads and returns the raw pressure data
+    def GetRawPressure(self):
+        # Write 0x43 + (self.mode << 6) to the controlReg, 0xF4, to start the measurement
+        self.bus.write_byte_data(self.address, controlReg, 0x34 + (self.mode << 6))
 
+        # Sleep for 8 ms.
+        # TODO: Way to use the correct wait time for the current mode
+        sleep(0.008)
+
+        # Read the raw data from the dataReg, 0xF6
+        MSB = self.bus.read_byte_data(self.address, dataReg)
+        LSB = self.bus.read_byte_data(self.address, dataReg + 1)
+        XLSB = self.bus.read_byte_data(self.address, dataReg + 2)
+
+        rawData = ((MSB << 16) + (LSB << 8) + XLSB) >> (8 - self.mode)
+
+        return rawData
+        
+
+    # Reads and returns the actual temperature
     def GetTemp(self):
-        pass
+        rawTemp = self.GetRawTemp()
+
+        X1 = 0
+        X2 = 0
+        B5 = 0
+        actualTemp = 0.0
+
+        X1 = ((rawTemp - self.calAC6) * self.calAC5) / math.pow(2, 15)
+        X2 = (calMC * math.pow(2, 11)) / (X1 + self.calMD)
+        B5 = X1 + X2
+        actualTemp = ((B5 + 8) / math.pow(2, 4)) / 10
+
+        return actualTemp
 
     def GetPressure(self):
         pass
