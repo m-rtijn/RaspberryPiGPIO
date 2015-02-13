@@ -5,6 +5,3 @@ Add:
 Fix:
 
 Test:
-- GetRawPressure
-- GetPressure
-- GetAltitude

@@ -111,9 +111,9 @@ class BMP180:
         sleep(0.008)
 
         # Read the raw data from the dataReg, 0xF6
-        MSB = self.bus.read_byte_data(self.address, dataReg)
-        LSB = self.bus.read_byte_data(self.address, dataReg + 1)
-        XLSB = self.bus.read_byte_data(self.address, dataReg + 2)
+        MSB = self.bus.read_byte_data(self.address, self.dataReg)
+        LSB = self.bus.read_byte_data(self.address, self.dataReg + 1)
+        XLSB = self.bus.read_byte_data(self.address, self.dataReg + 2)
 
         rawData = ((MSB << 16) + (LSB << 8) + XLSB) >> (8 - self.mode)
 
@@ -160,7 +160,7 @@ class BMP180:
         X1 = (self.calB2 * (B6 * B6 / math.pow(2, 12))) / math.pow(2, 11)
         X2 = self.calAC2 * B6 / math.pow(2, 11)
         X3 = X1 + X2
-        B3 = (((self.calAC1 * 4 + X3) << self.mode) + 2) / 4
+        B3 = (((self.calAC1 * 4 + int(X3)) << self.mode) + 2) / 4
         X1 = self.calAC3 * B6 / math.pow(2, 13)
         X2 = (self.calB1 * (B6 * B6 / math.pow(2, 12))) / math.pow(2, 16)
         X3 = ((X1 + X2) + 2) / math.pow(2, 2)
@@ -174,7 +174,7 @@ class BMP180:
 
         X1 = (pressure / math.pow(2, 8)) * (pressure / math.pow(2, 8))
         X1 = (X1 * 3038) / math.pow(2, 16)
-        X2 = (-7357 * p) / math.pow(2, 16)
+        X2 = (-7357 * pressure) / math.pow(2, 16)
         pressure = pressure + (X1 + X1 + 3791) / math.pow(2, 4)
 
         return pressure
